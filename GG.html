@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XD</title>
+    <style>
+        canvas {
+            border:1px solid #d3d3d3;
+            background-color: #f1f1f1;
+        }
+        </style>
+</head>
+<body onload="startGame()">
+    <script>
+
+        var rightPressed = false;
+        var leftPressed = false;
+        var upPressed = false;
+        var downPressed = false;
+        var wPressed = false;
+        var sPressed = false;
+        var aPressed = false;
+        var dPressed = false;
+        var friction = 0.01;
+
+        var myGamePiece;
+        var myGamePiece2;
+
+        var x = screen.availWidth/2 - 20;
+        var y = 650;
+        
+
+
+
+        function startGame() {
+            myGamePiece = new component(30, 30, "red", x, y);
+            myGamePiece2 = new component(30, 30, "blue", x, y);
+            myGameArea.start();
+        }
+        
+        var myGameArea = {
+            canvas : document.createElement("canvas"),
+            start : function() {
+                this.canvas.width = screen.availWidth - 20;
+                this.canvas.height = screen.availHeight - 130;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateGameArea, 0);    
+            },
+            stop : function() {
+                clearInterval(this.interval);
+            },    
+            clear : function() {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+        
+        function component(width, height, color, x, y, type) {
+            this.type = type;
+            this.width = width;
+            this.height = height;
+            this.x = x;
+            this.y = y;
+            this.speedX = 0;
+            this.speedY = 0;
+            this.gravity = 0.05;
+            this.gravitySpeed = 0;
+            this.bounce = 0.5;
+            this.update = function() {
+                ctx = myGameArea.context;
+                ctx.fillStyle = color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+            this.newPos = function() {
+                this.gravitySpeed += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY + this.gravitySpeed;
+                this.hitBottom();
+                //this.hitleftwall();
+            }
+            this.hitBottom = function() {
+                var rockbottom = myGameArea.canvas.height - this.height;
+                if (this.y > rockbottom) {
+                    this.y = rockbottom;
+                    this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+                }
+            }
+//            this.hitleftwall = function() {
+//                var leftwall = myGameArea.canvas.width - this.width;
+//                if (this.x > leftwall) {
+//                    this.x = leftwall;
+//                    this.speedX = 
+//                }
+//            }
+        }
+        
+        function updateGameArea() {
+            myGameArea.clear();
+
+
+                document.addEventListener("keydown", keyDownHandler, false);
+                document.addEventListener("keyup", keyUpHandler, false);
+
+                function keyDownHandler(e) {
+                    if(e.key == "Right" || e.key == "ArrowRight") {
+                        rightPressed = true;
+                    }
+                    if(e.key == "Left" || e.key == "ArrowLeft") {
+                        leftPressed = true;
+                    }
+                    if(e.key == "Up" || e.key == "ArrowUp") {
+                        upPressed = true;
+                    }
+                    if(e.key == "Down" || e.key == "ArrowDown") {
+                        downPressed = true;
+                    }
+
+                    if(e.key == "w" || e.key == "W") {
+                        wPressed = true;
+                    }
+                    if(e.key == "s" || e.key == "S") {
+                        sPressed = true;
+                    }
+                    if(e.key == "d" || e.key == "D") {
+                        dPressed = true;
+                    }
+                    if(e.key == "a" || e.key == "A") {
+                        aPressed = true;
+                    }
+                }
+
+                function keyUpHandler(e) {
+                    if(e.key == "Right" || e.key == "ArrowRight") {
+                        rightPressed = false;
+                    }
+                    if(e.key == "Left" || e.key == "ArrowLeft") {
+                        leftPressed = false;
+                    }
+                    if(e.key == "Up" || e.key == "ArrowUp") {
+                        upPressed = false;
+                    }
+                    if(e.key == "Down" || e.key == "ArrowDown") {
+                        downPressed = false;
+                    }
+
+                    if(e.key == "w" || e.key == "W") {
+                        wPressed = false;
+                    }
+                    if(e.key == "s" || e.key == "S") {
+                        sPressed = false;
+                    }
+                    if(e.key == "d" || e.key == "D") {
+                        dPressed = false;
+                    }
+                    if(e.key == "a" || e.key == "A") {
+                        aPressed = false;
+                    }
+                }
+
+ 
+            //myGamePiece
+            if (0.5 > myGamePiece.speedX && myGamePiece.speedX > -0.5) { myGamePiece.speedX = 0 }
+
+            if (dPressed == false && myGamePiece.speedX > 0) {myGamePiece.speedX = myGamePiece.speedX - friction;}  
+            if (aPressed == false && myGamePiece.speedX < 0) {myGamePiece.speedX = myGamePiece.speedX + friction;} 
+            
+            if (dPressed == true) {myGamePiece.speedX = 5;}
+            if (aPressed == true) {myGamePiece.speedX = -5;}
+            if (wPressed == true && myGamePiece.y > myGameArea.canvas.height - myGamePiece.height - 1) {myGamePiece.gravitySpeed = -5;}
+            if (wPressed == true) {myGamePiece.bounce = 0.6;}
+            if (sPressed == true) {myGamePiece.bounce = 0.2;}
+
+            //myGamePiece2
+            if (0.5 > myGamePiece2.speedX && myGamePiece2.speedX > -0.5) { myGamePiece2.speedX = 0 }
+
+            if (dPressed == false && myGamePiece2.speedX > 0) {myGamePiece2.speedX = myGamePiece2.speedX - friction;}  
+            if (aPressed == false && myGamePiece2.speedX < 0) {myGamePiece2.speedX = myGamePiece2.speedX + friction;} 
+            
+            if (rightPressed == true) {myGamePiece2.speedX = 5;}
+            if (leftPressed == true) {myGamePiece2.speedX = -5;}
+            if (upPressed == true && myGamePiece2.y > myGameArea.canvas.height - myGamePiece2.height - 1) {myGamePiece2.gravitySpeed = -5;}
+            if (upPressed == true) {myGamePiece2.bounce = 0.6;}
+            if (downPressed == true) {myGamePiece2.bounce = 0.2;}
+
+            
+
+            // w=87, s=83, d=68, a=65
+            //if (myGameArea.key == 39) {myGamePiece.speedX = 1; }
+            //if (myGameArea.key == 37) {myGamePiece.speedX = -1; }
+            //if (myGameArea.key == 38) {myGamePiece.speedX = -1; }
+            //if (myGameArea.key == 40) {myGamePiece.speedX = 1; }
+
+            //<canvas id="myCanvas" width="600" height="100"
+            //style="border:1px solid #d3d3d3;">
+            //Your browser does not support the canvas element.
+
+            //var canvas = document.getElementById("myCanvas");
+            //var ctx = canvas.getContext("2d");
+            //ctx.font = "30px Comic Sans MS";
+            //ctx.fillStyle = "red";
+            //ctx.textAlign = "center";
+            //ctx.fillText(myGameArea.key, canvas.width/2, canvas.height/2);
+
+            myGamePiece.newPos();
+            myGamePiece.update();
+            myGamePiece2.newPos();
+            myGamePiece2.update();
+        }
+        
+        </script>
+</body>
+</html>
