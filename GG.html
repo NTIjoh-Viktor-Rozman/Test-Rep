@@ -1,20 +1,20 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XD</title>
-<style>
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
-}
-</style>
+    <style>
+        canvas {
+            border:1px solid #d3d3d3;
+            background-color: #f1f1f1;
+        }
+        </style>
 </head>
 <body onload="startGame()">
     <script>
 
-        
         var rightPressed = false;
         var leftPressed = false;
         var upPressed = false;
@@ -23,6 +23,7 @@ canvas {
         var sPressed = false;
         var aPressed = false;
         var dPressed = false;
+        var friction = 0.01;
 
         var myGamePiece;
         var myGamePiece2;
@@ -32,7 +33,7 @@ canvas {
         
 
 
-        
+
         function startGame() {
             myGamePiece = new component(30, 30, "red", x, y);
             myGamePiece2 = new component(30, 30, "blue", x, y);
@@ -47,8 +48,6 @@ canvas {
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.interval = setInterval(updateGameArea, 0);    
-                
-
             },
             stop : function() {
                 clearInterval(this.interval);
@@ -56,7 +55,6 @@ canvas {
             clear : function() {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             }
-            
         }
         
         function component(width, height, color, x, y, type) {
@@ -80,7 +78,7 @@ canvas {
                 this.x += this.speedX;
                 this.y += this.speedY + this.gravitySpeed;
                 this.hitBottom();
-                this.hitleftwall();
+                //this.hitleftwall();
             }
             this.hitBottom = function() {
                 var rockbottom = myGameArea.canvas.height - this.height;
@@ -161,10 +159,13 @@ canvas {
                     }
                 }
 
-
+ 
             //myGamePiece
-            myGamePiece.speedX = 0;
-            myGamePiece.speedY = 0;
+            if (0.5 > myGamePiece.speedX && myGamePiece.speedX > -0.5) { myGamePiece.speedX = 0 }
+
+            if (dPressed == false && myGamePiece.speedX > 0) {myGamePiece.speedX = myGamePiece.speedX - friction;}  
+            if (aPressed == false && myGamePiece.speedX < 0) {myGamePiece.speedX = myGamePiece.speedX + friction;} 
+            
             if (dPressed == true) {myGamePiece.speedX = 5;}
             if (aPressed == true) {myGamePiece.speedX = -5;}
             if (wPressed == true && myGamePiece.y > myGameArea.canvas.height - myGamePiece.height - 1) {myGamePiece.gravitySpeed = -5;}
@@ -172,8 +173,11 @@ canvas {
             if (sPressed == true) {myGamePiece.bounce = 0.2;}
 
             //myGamePiece2
-            myGamePiece2.speedX = 0;
-            myGamePiece2.speedY = 0;
+            if (0.5 > myGamePiece2.speedX && myGamePiece2.speedX > -0.5) { myGamePiece2.speedX = 0 }
+
+            if (dPressed == false && myGamePiece2.speedX > 0) {myGamePiece2.speedX = myGamePiece2.speedX - friction;}  
+            if (aPressed == false && myGamePiece2.speedX < 0) {myGamePiece2.speedX = myGamePiece2.speedX + friction;} 
+            
             if (rightPressed == true) {myGamePiece2.speedX = 5;}
             if (leftPressed == true) {myGamePiece2.speedX = -5;}
             if (upPressed == true && myGamePiece2.y > myGameArea.canvas.height - myGamePiece2.height - 1) {myGamePiece2.gravitySpeed = -5;}
@@ -205,8 +209,6 @@ canvas {
             myGamePiece2.update();
         }
         
-        
         </script>
-
 </body>
 </html>
